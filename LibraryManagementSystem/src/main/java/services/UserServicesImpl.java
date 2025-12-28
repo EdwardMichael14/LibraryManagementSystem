@@ -18,10 +18,12 @@ import dtos.responses.UserSignUpResponse;
 import exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import utils.Mapper;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static utils.Mapper.mapBorrowBookResponse;
 import static utils.Mapper.mapSignUpUser;
 
 @Service
@@ -48,7 +50,6 @@ public class UserServicesImpl implements UserServices {
 
     @Override
     public UserLoginResponse login(UserLoginRequest request) {
-
         User user = (userRepository.findByEmail(request.getEmail()));
 
         if (user == null) {
@@ -58,7 +59,6 @@ public class UserServicesImpl implements UserServices {
         if (!user.getPassword().equals(request.getPassword())) {
             throw new IncorrectLogin("incorrect password");
         }
-
         return new UserLoginResponse("Login Successfull");
     }
 
@@ -101,14 +101,7 @@ public class UserServicesImpl implements UserServices {
         user.getBorrowedBooks().add(borrow);
         userRepository.save(user);
 
-
-        BorrowBookResponse borrowBookResponse = new BorrowBookResponse();
-
-        borrowBookResponse.setBookTitle(book.getTitle());
-        borrowBookResponse.setBookAuthor(book.getAuthor().getAuthorName());
-        borrowBookResponse.setEdition(book.getEdition());
-
-        return borrowBookResponse;
+        return mapBorrowBookResponse(borrow);
 
     }
 
@@ -151,6 +144,18 @@ public class UserServicesImpl implements UserServices {
     public List<Borrow> viewBorrowedBooks(User user) {
         return user.getBorrowedBooks();
     }
+
+//    private void findUserAndBook() {
+//        User user =  userRepository.findByEmail(request.getUser().getEmail());
+//        if(user == null) {
+//            throw new UserNotFound("user does not exist");
+//        }
+//
+//        Book book = bookRepository.findByTitleAuthorEdition(request.getTitle(), request.getAuthor(), request.getEdition());
+//        if(book == null) {
+//            throw new BookNotFound("Book not found");
+//        }
+//    }
 }
 
 

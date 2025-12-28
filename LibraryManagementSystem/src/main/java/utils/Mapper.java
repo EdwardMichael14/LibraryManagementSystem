@@ -1,8 +1,9 @@
 package utils;
 
+import data.models.Borrow;
 import data.models.User;
 import dtos.requests.UserSignUpRequest;
-
+import dtos.responses.BorrowBookResponse;
 
 public class Mapper {
 
@@ -16,6 +17,23 @@ public class Mapper {
 
         return user;
     }
+
+    public static BorrowBookResponse mapBorrowBookResponse(Borrow borrow) {
+
+        BorrowBookResponse borrowBookResponse = new BorrowBookResponse();
+
+        borrowBookResponse.setUserId(borrow.getUser().getId());
+        borrowBookResponse.setBookAuthor(borrow.getBook().getAuthor());
+        borrowBookResponse.setBookTitle(borrow.getBook().getTitle());
+        borrowBookResponse.setEdition(borrow.getBook().getEdition());
+        borrowBookResponse.setMessage("Book borrowed");
+        borrowBookResponse.getBorrowDate();
+
+
+        return borrowBookResponse;
+    }
+
+
 
 
 }
