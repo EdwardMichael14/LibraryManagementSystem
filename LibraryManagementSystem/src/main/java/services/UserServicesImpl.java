@@ -98,7 +98,7 @@ public class UserServicesImpl implements UserServices {
         book.setNoOfCopies(book.getNoOfCopies() - 1);
         bookRepository.save(book);
 
-        user.getBorrowedBooks().add(book);
+        user.getBorrowedBooks().add(borrow);
         userRepository.save(user);
 
 
@@ -136,7 +136,7 @@ public class UserServicesImpl implements UserServices {
         }
         bookRepository.save(book);
 
-        user.getBorrowedBooks().remove(book);
+        user.getBorrowedBooks().remove(borrow);
         userRepository.save(user);
 
         ReturnBookResponse returnBookResponse = new ReturnBookResponse();
@@ -145,6 +145,11 @@ public class UserServicesImpl implements UserServices {
         returnBookResponse.setMessage("Book Returned");
 
         return returnBookResponse;
+    }
+
+    @Override
+    public List<Borrow> viewBorrowedBooks(User user) {
+        return user.getBorrowedBooks();
     }
 }
 

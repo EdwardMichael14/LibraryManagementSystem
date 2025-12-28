@@ -1,6 +1,8 @@
 package services;
 
 import data.models.Book;
+import data.models.Borrow;
+import data.models.User;
 import dtos.requests.BorrowBookRequest;
 import dtos.requests.ReturnBookRequest;
 import dtos.requests.UserLoginRequest;
@@ -19,5 +21,6 @@ public interface UserServices {
         List<Book> viewBooks();
         BorrowBookResponse borrowBook(BorrowBookRequest request);
         ReturnBookResponse returnBook(ReturnBookRequest request);
+        List<Borrow> viewBorrowedBooks(User user);
 
 }

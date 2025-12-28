@@ -2,9 +2,8 @@ package dtos.requests;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
-
 @Data
-public class UserSignUpRequest {
+public class AdminSignUpRequest {
 
     private String fullName;
     @Id

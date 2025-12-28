@@ -11,10 +11,11 @@ public class User {
     @Id
     private String id;
     private String FullName;
+    @Id
     private String Email;
     private String Phone;
     private String Address;
     private String Username;
     private String Password;
-    private List<Book> borrowedBooks = new ArrayList<>();
+    private List<Borrow> borrowedBooks = new ArrayList<>();
 }
