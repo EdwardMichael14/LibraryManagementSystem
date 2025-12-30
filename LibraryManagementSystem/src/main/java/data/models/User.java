@@ -12,7 +12,7 @@ public class User {
     private String id;
     private String FullName;
     @Id
-    private String Email;
+    private String userEmail;
     private String Phone;
     private String Address;
     private String Username;

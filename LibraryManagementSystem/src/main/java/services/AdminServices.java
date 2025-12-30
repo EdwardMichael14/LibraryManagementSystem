@@ -3,9 +3,11 @@ package services;
 import data.models.Book;
 import data.models.Borrow;
 import data.models.User;
+import dtos.requests.AddBookRequest;
 import dtos.requests.AdminLoginRequest;
 import dtos.requests.AdminSignUpRequest;
 import dtos.requests.UserSignUpRequest;
+import dtos.responses.AddBookResponse;
 import dtos.responses.AdminLoginResponse;
 import dtos.responses.AdminSignUpResponse;
 import dtos.responses.UserSignUpResponse;
@@ -17,8 +19,8 @@ public interface AdminServices {
     AdminLoginResponse AdminLogin(AdminLoginRequest request);
     AdminSignUpResponse AdminSignUp(AdminSignUpRequest request);
     List<User> viewUsers();
-    List<Book> viewBooks();
+    List<Book> viewAllBooks();
     List<Borrow> viewBorrowedBooks();
     UserSignUpResponse registerUser(UserSignUpRequest request);
-
+    AddBookResponse addBook(AddBookRequest request);
 }

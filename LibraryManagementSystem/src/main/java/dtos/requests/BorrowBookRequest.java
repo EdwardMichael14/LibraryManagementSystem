@@ -7,7 +7,6 @@ import lombok.Data;
 @Data
 public class BorrowBookRequest {
 
-    private User user;
     private String title;
     private String author;
     private String edition;

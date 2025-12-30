@@ -18,7 +18,7 @@ import dtos.responses.UserSignUpResponse;
 import exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import utils.Mapper;
+
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -59,18 +59,18 @@ public class UserServicesImpl implements UserServices {
         if (!user.getPassword().equals(request.getPassword())) {
             throw new IncorrectLogin("incorrect password");
         }
-        return new UserLoginResponse("Login Successfull");
+        return new UserLoginResponse("Login Successful");
     }
 
     @Override
-    public List<Book> viewBooks() {
+    public List<Book> viewAllBooks() {
         return bookRepository.findAll();
     }
 
     @Override
-    public BorrowBookResponse borrowBook(BorrowBookRequest request) {
+    public BorrowBookResponse borrowBook(String email,BorrowBookRequest request) {
 
-        User user = userRepository.findByEmail(request.getUser().getEmail());
+        User user = userRepository.findByEmail(email);
             if(user == null) {
                 throw new UserNotFound("user does not exist");
             }
@@ -89,7 +89,7 @@ public class UserServicesImpl implements UserServices {
         borrow.setUser(user);
         borrow.setBorrowDate(LocalDateTime.now());
 
-        Borrow isBorrowed = borrowRepository.findByUserAndBook(user, book);
+        Borrow isBorrowed = borrowRepository.findByUserEmailAndBook(email, book);
         if(isBorrowed != null) {
             throw new BookAlreadyBorrowed("Book already borrowed by you");
         }
@@ -106,42 +106,43 @@ public class UserServicesImpl implements UserServices {
     }
 
     @Override
-    public ReturnBookResponse returnBook(ReturnBookRequest request) {
+    public ReturnBookResponse returnBook(String email, ReturnBookRequest request) {
 
-        User user =  userRepository.findByEmail(request.getUser().getEmail());
-        if(user == null) {
-            throw new UserNotFound("user does not exist");
-        }
-
-        Book book = bookRepository.findByTitleAuthorEdition(request.getTitle(), request.getAuthor(), request.getEdition());
-        if(book == null) {
-            throw new BookNotFound("Book not found");
-        }
-
-        Borrow borrow = borrowRepository.findByUserAndBook(user, book);
+//        User user =  userRepository.findByEmail(request.getUser().getEmail());
+//        if(user == null) {
+//            throw new UserNotFound("user does not exist");
+//        }
+//
+//        Book book = bookRepository.findByTitleAuthorEdition(request.getTitle(), request.getAuthor(), request.getEdition());
+//        if(book == null) {
+//            throw new BookNotFound("Book not found");
+//        }
+        Borrow borrow = borrowRepository.findByUserEmailAndBook(email, request.getBook());
         if(borrow == null) {
             throw new BookNotBorrowed("This book is not borrowed by you");
         }
         borrowRepository.delete(borrow);
-        book.setNoOfCopies(book.getNoOfCopies() + 1);
-        if(book.getNoOfCopies() > 0){
-            book.setStatus(BookStatus.AVAILABLE);
+        request.getBook().setNoOfCopies(request.getBook().getNoOfCopies() + 1);
+        if(request.getBook().getNoOfCopies() > 0){
+            request.getBook().setStatus(BookStatus.AVAILABLE);
         }
-        bookRepository.save(book);
+        bookRepository.save(request.getBook());
 
+        User user = userRepository.findByEmail(email);
         user.getBorrowedBooks().remove(borrow);
         userRepository.save(user);
 
         ReturnBookResponse returnBookResponse = new ReturnBookResponse();
 
-        returnBookResponse.setBook(book);
+        returnBookResponse.setBook(request.getBook());
         returnBookResponse.setMessage("Book Returned");
 
         return returnBookResponse;
     }
 
     @Override
-    public List<Borrow> viewBorrowedBooks(User user) {
+    public List<Borrow> viewBorrowedBooks(String email) {
+        User user = userRepository.findByEmail(email);
         return user.getBorrowedBooks();
     }
 

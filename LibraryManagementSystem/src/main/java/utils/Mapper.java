@@ -1,7 +1,9 @@
 package utils;
 
+import data.models.Book;
 import data.models.Borrow;
 import data.models.User;
+import dtos.requests.AddBookRequest;
 import dtos.requests.UserSignUpRequest;
 import dtos.responses.BorrowBookResponse;
 
@@ -11,7 +13,7 @@ public class Mapper {
             User user = new User();
 
         user.setFullName(request.getFullName());
-        user.setEmail(request.getEmail());
+        user.setUserEmail(request.getEmail());
         user.setPassword(request.getPassword());
         user.setPhone(request.getPhone());
 
@@ -31,6 +33,20 @@ public class Mapper {
 
 
         return borrowBookResponse;
+    }
+
+    public static Book mapAddBook(AddBookRequest request) {
+
+        Book book = new Book();
+
+        book.setAuthor(request.getBook().getAuthor());
+        book.setTitle(request.getBook().getTitle());
+        book.setEdition(request.getBook().getEdition());
+        book.setNoOfCopies(request.getBook().getNoOfCopies());
+        book.setQuantity(request.getBook().getQuantity());
+        book.setIsbn(request.getBook().getIsbn());
+
+        return book;
     }
 
 

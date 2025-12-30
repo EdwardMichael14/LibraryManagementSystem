@@ -18,9 +18,9 @@ public interface UserServices {
 
         UserSignUpResponse signUp(UserSignUpRequest request);
         UserLoginResponse login(UserLoginRequest request);
-        List<Book> viewBooks();
-        BorrowBookResponse borrowBook(BorrowBookRequest request);
-        ReturnBookResponse returnBook(ReturnBookRequest request);
-        List<Borrow> viewBorrowedBooks(User user);
+        List<Book> viewAllBooks();
+        BorrowBookResponse borrowBook(String email,BorrowBookRequest request);
+        ReturnBookResponse returnBook(String email, ReturnBookRequest request);
+        List<Borrow> viewBorrowedBooks(String email);
 
 }

@@ -7,9 +7,8 @@ import lombok.Data;
 
 @Data
 public class ReturnBookRequest {
-    private User user;
-    private String title;
-    private String edition;
-    private String author;
+    private Book book;
+//    private String edition;
+//    private String author;
 
 }
