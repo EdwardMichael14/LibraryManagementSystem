@@ -10,9 +10,8 @@ public class Book {
     private String title;
     private String author;
     private String isbn;
-    private int quantity;
     private String edition;
-    private BookStatus status;
+    private BookStatus status = BookStatus.AVAILABLE;
     private int noOfCopies;
 
 

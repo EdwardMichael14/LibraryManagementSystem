@@ -3,7 +3,6 @@ package org.example.services;
 import org.example.data.models.Admin;
 import org.example.data.models.Book;
 import org.example.data.models.Borrow;
-import org.example.data.models.User;
 import org.example.data.repositories.AdminRepository;
 import org.example.data.repositories.BookRepository;
 import org.example.data.repositories.BorrowRepository;
@@ -26,7 +25,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.example.utils.Mapper.mapAddBook;
 

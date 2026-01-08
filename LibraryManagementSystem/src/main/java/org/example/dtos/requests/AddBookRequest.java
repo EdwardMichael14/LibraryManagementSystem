@@ -7,12 +7,6 @@ import org.example.data.models.BookStatus;
 
 @Data
 public class AddBookRequest {
-    private String id;
-    private String title;
-    private String authorName;
-    private String isbn;
-    private int quantity;
-    private String edition;
-    private int noOfCopies;
+   private Book book;
 
 }

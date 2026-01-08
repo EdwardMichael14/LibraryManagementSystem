@@ -42,12 +42,12 @@ public class Mapper {
 
         Book book = new Book();
 
-        book.setAuthor(request.getAuthorName());
-        book.setTitle(request.getTitle());
-        book.setEdition(request.getEdition());
-        book.setNoOfCopies(request.getNoOfCopies());
-        book.setQuantity(request.getQuantity());
-        book.setIsbn(request.getIsbn());
+        book.setAuthor(request.getBook().getAuthor());
+        book.setTitle(request.getBook().getTitle());
+        book.setEdition(request.getBook().getEdition());
+        book.setNoOfCopies(request.getBook().getNoOfCopies());
+        book.setIsbn(request.getBook().getIsbn());
+        book.setStatus(request.getBook().getStatus());
 
         return book;
     }
