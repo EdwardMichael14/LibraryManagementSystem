@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
 
 import static org.example.utils.Mapper.mapBorrowBookResponse;
 import static org.example.utils.Mapper.mapSignUpUser;
@@ -96,7 +96,7 @@ public class UserServicesImpl implements UserServices {
             throw new NoCopiesAvailable("No available copies");
         }
 
-        Borrow isBorrowed = borrowRepository.findByUser_EmailAndBook_Id(email, book.getId());
+        Borrow isBorrowed = borrowRepository.findByEmailAndBookId(email, book.getId());
         if(isBorrowed != null) {
             throw new BookAlreadyBorrowed("Book already borrowed by you");
         }
@@ -124,7 +124,7 @@ public class UserServicesImpl implements UserServices {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
 
-        Borrow borrow = borrowRepository.findByUser_EmailAndBook_Id(email, request.getBook().getId());
+        Borrow borrow = borrowRepository.findByEmailAndBookId(email, request.getBook().getId());
         if(borrow == null) {
             throw new BookNotBorrowed("This book is not borrowed by you");
         }

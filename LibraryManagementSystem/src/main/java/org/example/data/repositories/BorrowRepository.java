@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface BorrowRepository extends MongoRepository<Borrow, String> {
 
-    Borrow findByUser_EmailAndBook_Id(String email, String bookId);
+    Borrow findByEmailAndBookId(String email, String bookId);
 
     List<Borrow> findByEmail(String email);
 }
