@@ -20,6 +20,6 @@ public interface UserServices {
         List<Book> viewAllBooks();
         BorrowBookResponse borrowBook(BorrowBookRequest request);
         ReturnBookResponse returnBook(ReturnBookRequest request);
-        List<Borrow> viewBorrowedBooks();
+        List<Book> viewBorrowedBooks();
 
 }

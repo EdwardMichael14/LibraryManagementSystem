@@ -5,8 +5,12 @@ import org.example.data.models.Borrow;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface BorrowRepository extends MongoRepository<Borrow, String> {
 
-    Borrow findByUser_EmailAndBook(String email, Book book);
+    Borrow findByUser_EmailAndBook_Id(String email, String bookId);
+
+    List<Borrow> findByEmail(String email);
 }

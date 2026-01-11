@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,13 +77,16 @@ public class UserServicesImpl implements UserServices {
     public BorrowBookResponse borrowBook(BorrowBookRequest request) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal().equals("anonymousUser")) {
+            throw new RuntimeException("User not authenticated");
+        }
         String email = authentication.getName();
 
-       Optional <User> user = userRepository.findByEmail(email);
-            if(user.isEmpty()) {
-                throw new UserNotFound("user does not exist");
-            }
-        Book book = bookRepository.findByTitleAndAuthorAndEdition(request.getTitle(), request.getAuthor(), request.getEdition());
+
+            String title = request.getTitle().trim();
+            String edition = request.getEdition();
+            String author = request.getAuthor();
+        Book book = bookRepository.findByTitleAndAuthorAndEdition(title, author, edition);
             if(book == null) {
                 throw new BookNotFound("Book not found");
             }
@@ -92,23 +96,23 @@ public class UserServicesImpl implements UserServices {
             throw new NoCopiesAvailable("No available copies");
         }
 
-        Borrow isBorrowed = borrowRepository.findByUser_EmailAndBook(email, book);
+        Borrow isBorrowed = borrowRepository.findByUser_EmailAndBook_Id(email, book.getId());
         if(isBorrowed != null) {
             throw new BookAlreadyBorrowed("Book already borrowed by you");
         }
 
         Borrow borrow = new Borrow();
-        borrow.setBook(book);
-        borrow.setUser(user.get());
+        borrow.setBookId(book.getId());
+        borrow.setEmail(email);
         borrow.setBorrowDate(LocalDateTime.now());
 
         borrowRepository.save(borrow);
 
         book.setNoOfCopies(book.getNoOfCopies() - 1);
+        if(book.getNoOfCopies() == 0){
+            book.setStatus(BookStatus.UN_AVAILABLE);
+        }
         bookRepository.save(book);
-
-        user.get().getBorrowedBooks().add(borrow);
-        userRepository.save(user.get());
 
         return mapBorrowBookResponse(borrow);
 
@@ -120,7 +124,7 @@ public class UserServicesImpl implements UserServices {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
 
-        Borrow borrow = borrowRepository.findByUser_EmailAndBook(email, request.getBook());
+        Borrow borrow = borrowRepository.findByUser_EmailAndBook_Id(email, request.getBook().getId());
         if(borrow == null) {
             throw new BookNotBorrowed("This book is not borrowed by you");
         }
@@ -129,10 +133,6 @@ public class UserServicesImpl implements UserServices {
         request.getBook().setStatus(BookStatus.AVAILABLE);
 
         bookRepository.save(request.getBook());
-
-        Optional<User> user = userRepository.findByEmail(email);
-        user.get().getBorrowedBooks().remove(borrow);
-        userRepository.save(user.get());
 
         ReturnBookResponse returnBookResponse = new ReturnBookResponse();
 
@@ -143,18 +143,20 @@ public class UserServicesImpl implements UserServices {
     }
 
     @Override
-    public List<Borrow> viewBorrowedBooks() {
+    public List<Book> viewBorrowedBooks() {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         String email = authentication.getName();
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFound("User not found"));
+        List<Borrow> borrows = borrowRepository.findByEmail(email);
+        List<Book> borrowedBoooks = new ArrayList<>();
+        for (Borrow borrow : borrows) {
+            bookRepository.findById(borrow.getBookId()).ifPresent(borrowedBoooks::add);
 
-        return user.getBorrowedBooks();
+        }
+        return borrowedBoooks;
     }
 
 }
-
 

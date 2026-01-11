@@ -4,6 +4,7 @@ import org.example.data.models.Book;
 import org.example.data.models.Borrow;
 import org.example.data.models.User;
 import org.example.dtos.requests.AddBookRequest;
+import org.example.dtos.requests.BorrowBookRequest;
 import org.example.dtos.requests.UserSignUpRequest;
 import org.example.dtos.responses.BorrowBookResponse;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -27,12 +28,9 @@ public class Mapper {
 
         BorrowBookResponse borrowBookResponse = new BorrowBookResponse();
 
-        borrowBookResponse.setUserId(borrow.getUser().getId());
-        borrowBookResponse.setBookAuthor(borrow.getBook().getAuthor());
-        borrowBookResponse.setBookTitle(borrow.getBook().getTitle());
-        borrowBookResponse.setEdition(borrow.getBook().getEdition());
         borrowBookResponse.setMessage("Book borrowed");
         borrowBookResponse.setBorrowDate(borrow.getBorrowDate());
+
 
 
         return borrowBookResponse;
