@@ -12,6 +12,7 @@ import org.example.dtos.requests.AdminLoginRequest;
 import org.example.dtos.requests.AdminSignUpRequest;
 import org.example.dtos.requests.UserSignUpRequest;
 import org.example.dtos.responses.*;
+import org.example.exceptions.IncorrectLogin;
 import org.example.exceptions.UserAlreadyExist;
 import org.example.security.jwt.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,11 @@ public class AdminServicesImpl implements AdminServices {
            if(adminRepository.findByEmail(request.getEmail()).isPresent()){
                 throw new UserAlreadyExist("User already exist");
             }
+            
+            // Check if email is already used by a user
+            if(userRepository.findByEmail(request.getEmail()).isPresent()) {
+                throw new UserAlreadyExist("Email is already registered as a user");
+            }
 
             Admin admin = new Admin();
             admin.setEmail(request.getEmail());
@@ -66,6 +72,10 @@ public class AdminServicesImpl implements AdminServices {
     @Override
     public AdminLoginResponse adminLogin(AdminLoginRequest request) {
 
+        if(adminRepository.findByEmail(request.getEmail()).isEmpty()){
+            throw new IncorrectLogin("Invalid email or password");
+        }
+
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
         String token = jwtService.generateToken((UserDetails) authentication.getPrincipal());
@@ -75,14 +85,7 @@ public class AdminServicesImpl implements AdminServices {
 
     @Override
     public List<UserResponse> viewUsers() {
-        return userRepository.findAll()
-                .stream()
-                .map(user -> new UserResponse(
-                        user.getId(),
-                        user.getFullName(),
-                        user.getEmail()
-                ))
-                .toList();
+        return userRepository.findAll().stream().map(user -> new UserResponse(user.getId(), user.getFullName(), user.getEmail())).toList();
     }
 
 

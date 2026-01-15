@@ -1,6 +1,7 @@
 package org.example.services;
 
 import org.example.data.models.*;
+import org.example.data.repositories.AdminRepository;
 import org.example.data.repositories.BookRepository;
 import org.example.data.repositories.BorrowRepository;
 import org.example.data.repositories.UserRepository;
@@ -36,6 +37,8 @@ public class UserServicesImpl implements UserServices {
     @Autowired
     private UserRepository userRepository;
     @Autowired
+    private AdminRepository adminRepository;
+    @Autowired
     private BorrowRepository borrowRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -51,6 +54,10 @@ public class UserServicesImpl implements UserServices {
                 throw new UserAlreadyExist("User already exist");
         }
 
+        if(adminRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new UserAlreadyExist("Email is already registered as an admin");
+        }
+
         User user = mapSignUpUser(request);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
@@ -60,6 +67,10 @@ public class UserServicesImpl implements UserServices {
 
     @Override
     public UserLoginResponse login(UserLoginRequest request) {
+
+        if(userRepository.findByEmail(request.getEmail()).isEmpty()){
+            throw new IncorrectLogin("Invalid email or password");
+        }
 
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
@@ -80,16 +91,27 @@ public class UserServicesImpl implements UserServices {
         if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal().equals("anonymousUser")) {
             throw new RuntimeException("User not authenticated");
         }
+        
         String email = authentication.getName();
 
+        if (request.getTitle() == null || request.getTitle().isEmpty()) {
+            throw new BookNotFound("Book title is required");
+        }
+        if (request.getAuthor() == null || request.getAuthor().isEmpty()) {
+            throw new BookNotFound("Book author is required");
+        }
+        if (request.getEdition() == null || request.getEdition().isEmpty()) {
+            throw new BookNotFound("Book edition is required");
+        }
 
-            String title = request.getTitle().trim();
-            String edition = request.getEdition();
-            String author = request.getAuthor();
+        String title = request.getTitle().trim();
+        String edition = request.getEdition().trim();
+        String author = request.getAuthor().trim();
         Book book = bookRepository.findByTitleAndAuthorAndEdition(title, author, edition);
-            if(book == null) {
-                throw new BookNotFound("Book not found");
-            }
+
+        if(book == null) {
+            throw new BookNotFound("Book not found");
+        }
 
         if(book.getNoOfCopies() == 0){
             book.setStatus(BookStatus.UN_AVAILABLE);

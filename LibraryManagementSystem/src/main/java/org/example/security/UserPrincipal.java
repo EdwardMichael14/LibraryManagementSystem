@@ -19,7 +19,6 @@ public class UserPrincipal implements UserDetails {
     private String password;
     private Role role;
 
-    // Constructor for Admin
     public UserPrincipal(Admin admin) {
         this.id = admin.getId();
         this.email = admin.getEmail();
@@ -27,7 +26,6 @@ public class UserPrincipal implements UserDetails {
         this.role = admin.getRole();
     }
 
-    // Constructor for User
     public UserPrincipal(User user) {
         this.id = user.getId();
         this.email = user.getEmail();

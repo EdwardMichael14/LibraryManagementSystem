@@ -6,7 +6,5 @@ import lombok.Data;
 @Data
 public class ReturnBookRequest {
     private Book book;
-//    private String edition;
-//    private String author;
 
 }

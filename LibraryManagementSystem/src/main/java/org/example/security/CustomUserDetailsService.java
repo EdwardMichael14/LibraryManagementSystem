@@ -20,19 +20,16 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email)
             throws UsernameNotFoundException {
 
-        // Try Admin first
         Admin admin = adminRepository.findByEmail(email).orElse(null);
         if (admin != null) {
             return new UserPrincipal(admin);
         }
 
-        // Try User (customer)
         User user = userRepository.findByEmail(email).orElse(null);
         if (user != null) {
             return new UserPrincipal(user);
         }
 
-        // Nothing found
         throw new UsernameNotFoundException(
                 "No user or admin found with email: " + email
         );
